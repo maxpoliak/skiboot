@@ -219,6 +219,13 @@ uint32_t p8_irq_to_phb(uint32_t irq);
 /* TBD: NX, AS, ...
  */
 
+/*
+ * Unit address of the parent interrupt controller node
+ * in the device-tree. See doc/xive.rst
+ */
+#define ICS_NODE_UNIT_ADDR	0xffffffffffffffff
+#define ICS_NAME_BUF_SIZE	40
+
 /* Note about interrupt numbers on P9
  * ==================================
  *

@@ -18,6 +18,10 @@ I - Device-tree updates
 
     - ``compatible`` : This is extended with a new value ``ibm,opal-xive-vc``
 
+    - The unit-address has been changed to ``0xffffffffffffffff``, because
+      unit-address 0 is reserved for ``memory@0`` node. In the device-tree,
+      it looks like this:
+        ``/interrupt-controller@0xffffffffffffffff``
 
  2) The new ``/interrupt-controller@<addr>`` node
 

@@ -173,18 +173,21 @@ uint32_t get_psi_interrupt(uint32_t chip_id)
 	return irq;
 }
 
-
 struct dt_node *add_ics_node(void)
 {
-	struct dt_node *ics = dt_new_addr(dt_root, "interrupt-controller", 0);
+	struct dt_node *ics;
 	bool has_xive;
 
+	ics = dt_new_addr(dt_root, "interrupt-controller", ICS_NODE_UNIT_ADDR);
 	if (!ics)
 		return NULL;
 
 	has_xive = proc_gen >= proc_gen_p9;
 
-	dt_add_property_cells(ics, "reg", 0, 0, 0, 0);
+	dt_add_property_cells(ics, "reg",
+			      (uint32_t) (ICS_NODE_UNIT_ADDR >> 32),
+			      (uint32_t) (ICS_NODE_UNIT_ADDR & 0xffffffff),
+			      0, 0);
 	dt_add_property_strings(ics, "compatible",
 				has_xive ? "ibm,opal-xive-vc" : "IBM,ppc-xics",
 				"IBM,opal-xics");
@@ -200,9 +203,15 @@ struct dt_node *add_ics_node(void)
 uint32_t get_ics_phandle(void)
 {
 	struct dt_node *i;
+	char ics_node_name[ICS_NAME_BUF_SIZE];
+
+	snprintf(ics_node_name,
+		 ICS_NAME_BUF_SIZE,
+		 "interrupt-controller@%lx",
+		 ICS_NODE_UNIT_ADDR);
 
 	for (i = dt_first(dt_root); i; i = dt_next(dt_root, i)) {
-		if (streq(i->name, "interrupt-controller@0")) {
+		if (streq(i->name, ics_node_name)) {
 			return i->phandle;
 		}
 	}
